@@ -4,19 +4,16 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { LineChart, yAxisSides } from "react-native-gifted-charts";
 import { getChartMax, getChartSpacing, getChartYOffset } from "./ChartUtils";
+import { ChartData } from "./ChartDataTypes";
 
 type LineGraphPreviewProps = {
+  data: ChartData[];
+  data2?: ChartData[];
   color: string;
 };
 
 export default function LineGraphPreview(props: LineGraphPreviewProps) {
   const [chartParentWidth, setChartParentWidth] = React.useState(0);
-
-  const heartRateData = [
-    72, 85, 68, 77, 93, 62, 80, 75, 88, 71, 79, 84, 67, 90, 73, 81, 76, 69, 82,
-    78, 85, 87, 89, 91, 93, 95, 97, 99, 101, 103, 75, 77, 80, 82, 85, 87, 90,
-    92, 95, 97,
-  ];
 
   const customLabel = (val) => () => {
     return (
@@ -26,13 +23,13 @@ export default function LineGraphPreview(props: LineGraphPreviewProps) {
     );
   };
 
-  const displayedData = heartRateData.map((bpm, index) => {
+  const displayedData = props.data.map((data: ChartData, index) => {
     const NO_X_INTERVAL = 9;
     return index % NO_X_INTERVAL
       ? {
-          value: bpm,
+          value: data.value,
         }
-      : { value: bpm, labelComponent: customLabel(index + 1) };
+      : { value: data.value }; //, labelComponent: customLabel(index + 1)
   });
 
   return (
@@ -46,16 +43,19 @@ export default function LineGraphPreview(props: LineGraphPreviewProps) {
         areaChart
         isAnimated
         data={displayedData}
-        color={props.color}
+        data2={props.data2}
+        color1={props.color}
+        color2={props.color}
+        strokeDashArray2={[2, 2]}
         height={80}
         width={chartParentWidth - 28}
-        spacing={getChartSpacing(heartRateData, chartParentWidth)}
+        spacing={getChartSpacing(props.data, chartParentWidth)}
         disableScroll
         hideYAxisText
         hideDataPoints
         hideRules
-        maxValue={getChartMax(heartRateData)}
-        yAxisOffset={getChartYOffset(heartRateData)}
+        maxValue={getChartMax(props.data)}
+        yAxisOffset={getChartYOffset(props.data)}
         thickness={2}
         yAxisThickness={0}
         initialSpacing={0}

@@ -6,6 +6,7 @@ import { Text, Card } from "react-native-paper";
 import LineGraphPreview from "../charts/LineGraphPreview";
 import { DATA_YELLOW } from "../../constants/colors";
 import CardTitle from "./card/CardTitle";
+import { generateData } from "./random";
 
 type DataValueProp = {
   sysRate: number;
@@ -32,6 +33,10 @@ const DataValue = (props: DataValueProp) => {
 export default function BloodPressureCard() {
   const [openCard, setOpenCard] = React.useState(false);
 
+  const [sysData, setSys] = React.useState(generateData(80, 200, 100));
+  const [diaData, setDia] = React.useState(generateData(60, 120, 100));
+  console.log(sysData, diaData);
+
   return (
     <Card style={styles.cardContainer}>
       <CardTitle
@@ -42,7 +47,7 @@ export default function BloodPressureCard() {
       />
       <View style={styles.dataContainer}>
         <DataValue sysRate={140} diaRate={90} lastUpdatedSec={45} />
-        <LineGraphPreview color={DATA_YELLOW} />
+        <LineGraphPreview color={DATA_YELLOW} data={sysData} data2={diaData} />
       </View>
     </Card>
   );

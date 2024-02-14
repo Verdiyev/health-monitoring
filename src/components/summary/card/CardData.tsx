@@ -1,84 +1,54 @@
 import React from "react";
 
 import { StyleSheet, View } from "react-native";
-import { Button, Menu, useTheme } from "react-native-paper";
 import CardDataValue from "./CardDataValue";
 import DataLineGraph from "../../charts/DataLineGraph";
+import { ChartData, DataTimeframe } from "../../charts/ChartDataTypes";
+import TimeframeMenu from "./TimeframeMenu";
 
 type CardDataProps = {
+  data: ChartData[];
+  data2?: ChartData[];
   color: string;
+  timeframe: DataTimeframe;
+  setTimeframe: (x: DataTimeframe) => void;
 };
 
-type DataTimeframe = "1 hour" | "4 hours" | "1 day";
-
 export default function CardData(props: CardDataProps) {
-  const theme = useTheme();
-  const [menuVisible, setMenuVisible] = React.useState(false);
-  const [selectedTimeframe, setSelectedTimeframe] =
-    React.useState<DataTimeframe>("1 hour");
+  const [viewIndex, setViewIndex] = React.useState(-1);
 
-  const openMenu = () => setMenuVisible(true);
-
-  const closeMenu = () => setMenuVisible(false);
-
-  const handleTimeframePress = (timeframe: DataTimeframe) => () => {
-    setSelectedTimeframe(timeframe);
-    closeMenu();
-  };
+  const showExactTime = viewIndex > -1;
+  const setShownValue =
+    viewIndex == -1 ? props.data[props.data.length - 1] : props.data[viewIndex];
 
   return (
     <View>
-      <View style={styles(theme).dataTimeframeContainer}>
+      <View style={styles.dataTimeframeContainer}>
         <CardDataValue
           color={props.color}
-          heartRate={100}
-          lastUpdatedSec={45}
+          lastChartData={setShownValue}
+          showExactTime={showExactTime}
         />
-        <View>
-          <Menu
-            visible={menuVisible}
-            onDismiss={closeMenu}
-            anchorPosition="bottom"
-            anchor={
-              <Button
-                icon={menuVisible ? "menu-up-outline" : "menu-down-outline"}
-                mode="outlined"
-                onPress={openMenu}
-                style={styles(theme).timeframeButton}
-              >
-                {selectedTimeframe}
-              </Button>
-            }
-          >
-            <Menu.Item
-              onPress={handleTimeframePress("1 hour")}
-              title="1 hour"
-            />
-            <Menu.Item
-              onPress={handleTimeframePress("4 hours")}
-              title="4 hours"
-            />
-            <Menu.Item onPress={handleTimeframePress("1 day")} title="1 day" />
-          </Menu>
-        </View>
+        <TimeframeMenu
+          timeframe={props.timeframe}
+          setTimeframe={props.setTimeframe}
+        />
       </View>
 
-      <DataLineGraph color={props.color} />
+      <DataLineGraph
+        color={props.color}
+        data={props.data}
+        setViewIndex={setViewIndex}
+      />
     </View>
   );
 }
 
-const styles = (theme) =>
-  StyleSheet.create({
-    dataTimeframeContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 24,
-    },
-    timeframeButton: {
-      borderRadius: 12,
-      borderWidth: 2,
-      borderColor: theme.colors.primaryContainer,
-    },
-  });
+const styles = StyleSheet.create({
+  dataTimeframeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 24,
+  },
+});
