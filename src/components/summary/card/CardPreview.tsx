@@ -8,7 +8,9 @@ import { ChartData } from "../../charts/ChartDataTypes";
 
 type CardPreviewProps = {
   data: ChartData[];
+  unit: string;
   data2?: ChartData[];
+  unit2?: string;
   color: string;
 };
 
@@ -18,7 +20,14 @@ export default function CardPreview(props: CardPreviewProps) {
       <CardDataValue
         color={props.color}
         showExactTime={false}
-        lastChartData={props.data[props.data.length - 1]}
+        chartData={props.data[props.data.length - 1]}
+        unit={props.unit}
+        chartData2={
+          props.data2 == undefined
+            ? undefined
+            : props.data2[props.data2.length - 1]
+        }
+        unit2={props.unit2}
       />
       <LineGraphPreview
         color={props.color}

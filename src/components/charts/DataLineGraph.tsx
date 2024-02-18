@@ -1,6 +1,6 @@
 import React from "react";
 
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 import { getChartSpacing, getChartYOffset } from "./ChartUtils";
 import { ChartData } from "./ChartDataTypes";
@@ -39,13 +39,16 @@ export default function DataLineGraph(props: DataLineGraphProps) {
         isAnimated
         rotateLabel
         data={displayedData}
+        data2={props.data2}
         color={props.color}
+        color2={props.color}
+        strokeDashArray2={[2, 2]}
         width={chartParentWidth - 45}
         spacing={getChartSpacing(props.data, chartParentWidth - 50)}
         height={150}
         hideDataPoints
         disableScroll
-        yAxisOffset={getChartYOffset(displayedData)}
+        yAxisOffset={getChartYOffset(displayedData, props.data2)}
         noOfSections={4}
         initialSpacing={10}
         endSpacing={10}

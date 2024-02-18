@@ -55,15 +55,15 @@ export default function LineGraphPreview(props: LineGraphPreviewProps) {
         hideDataPoints
         hideRules
         maxValue={getChartMax(props.data)}
-        yAxisOffset={getChartYOffset(props.data)}
+        yAxisOffset={getChartYOffset(props.data, props.data2)}
         thickness={2}
         yAxisThickness={0}
         initialSpacing={0}
         endSpacing={0}
         startFillColor={props.color}
-        startOpacity={0.4}
         endFillColor={props.color}
-        endOpacity={0.1}
+        startOpacity={props.data2 == undefined ? 0.4 : 0.2}
+        endOpacity={props.data2 == undefined ? 0.1 : 0.05}
         xAxisColor="lightgray"
       />
     </View>

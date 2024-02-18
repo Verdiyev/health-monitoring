@@ -11,7 +11,10 @@ import {
 } from "date-fns";
 
 type DataValueProp = {
-  lastChartData: ChartData;
+  chartData: ChartData;
+  unit: string;
+  chartData2?: ChartData;
+  unit2?: string;
   color: string;
   showExactTime: boolean;
 };
@@ -37,10 +40,15 @@ export default function CardDataValue(props: DataValueProp) {
   return (
     <View style={coloredStyle.dataValueContainer}>
       <Text variant="headlineMedium" style={coloredStyle.dataText}>
-        {props.lastChartData.value} bpm
+        {props.chartData.value} {props.unit}
       </Text>
+      {props.chartData2 && props.unit2 && (
+        <Text variant="headlineMedium" style={coloredStyle.dataText}>
+          {props.chartData2.value} {props.unit2}
+        </Text>
+      )}
       <Text variant="labelLarge" style={coloredStyle.updatedText}>
-        {getLastUpdatedText(props.lastChartData.timestamp, props.showExactTime)}
+        {getLastUpdatedText(props.chartData.timestamp, props.showExactTime)}
       </Text>
     </View>
   );
