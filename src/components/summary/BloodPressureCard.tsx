@@ -35,7 +35,6 @@ export default function BloodPressureCard() {
 
   const [sysData, setSys] = React.useState(generateData(80, 200, 100));
   const [diaData, setDia] = React.useState(generateData(60, 120, 100));
-  console.log(sysData, diaData);
 
   return (
     <Card style={styles.cardContainer}>

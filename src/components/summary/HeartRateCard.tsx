@@ -71,7 +71,6 @@ export default function HeartRateCard() {
     React.useState<DataTimeframe>("5 mins");
 
   const displayedData = processHeartData(selectedTimeframe, heartRateData);
-  console.log(heartRateData, displayedData);
 
   return (
     <Card style={styles.cardContainer}>

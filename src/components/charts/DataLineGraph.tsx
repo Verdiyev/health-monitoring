@@ -19,7 +19,6 @@ export default function DataLineGraph(props: DataLineGraphProps) {
   const NO_XAXIS_LABELS = 4;
   const interval = Math.round(props.data.length / NO_XAXIS_LABELS);
 
-  console.log(interval);
   const displayedData = props.data.map((hrData, index) => {
     return {
       value: hrData.value,

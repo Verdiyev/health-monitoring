@@ -4,6 +4,7 @@
     "slug": "VitaSense",
     "version": "1.0.0",
     "orientation": "portrait",
+    "main": "Main.tsx",
     "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
