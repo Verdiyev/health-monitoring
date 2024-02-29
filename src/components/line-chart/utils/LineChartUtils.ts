@@ -6,7 +6,7 @@ import {
   scaleLinear,
   scaleTime,
 } from "d3";
-import { LineDataPoint } from "./ChartTypes";
+import { LineDataPoint } from "./LineChartTypes";
 
 export function linspace(
   start: number,

@@ -23,7 +23,7 @@ import {
   DefaultLineChartProps,
   GraphDimensions,
   LineChartProps,
-} from "./utils/ChartTypes";
+} from "./utils/LineChartTypes";
 import { generateGraph, getDataRange } from "./utils/LineChartUtils";
 
 export default function LineChart(props: LineChartProps) {

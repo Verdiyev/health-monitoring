@@ -5,7 +5,7 @@ import { Text } from "react-native-paper";
 import { getChartMax, getChartSpacing, getChartYOffset } from "./ChartUtils";
 import { ChartData } from "./ChartDataTypes";
 import LineChart from "../line-chart/LineChart";
-import { LineDataPoint } from "../line-chart/utils/ChartTypes";
+import { LineDataPoint } from "../line-chart/utils/LineChartTypes";
 
 type LineGraphPreviewProps = {
   data: ChartData[];

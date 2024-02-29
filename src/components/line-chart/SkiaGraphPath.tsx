@@ -7,7 +7,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import LineChartGradient from "./LineChartGradient";
-import { DefaultLineChartProps, GraphDimensions } from "./utils/ChartTypes";
+import { DefaultLineChartProps, GraphDimensions } from "./utils/LineChartTypes";
 
 type SkiaGraphPathProps = {
   skiaGraph: SkPath;

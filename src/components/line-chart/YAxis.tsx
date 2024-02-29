@@ -10,7 +10,7 @@ import {
 import _ from "lodash";
 
 import { linspace } from "./utils/LineChartUtils";
-import { DefaultLineChartProps, GraphDimensions } from "./utils/ChartTypes";
+import { DefaultLineChartProps, GraphDimensions } from "./utils/LineChartTypes";
 
 type YAxisProps = {
   minValue: number;

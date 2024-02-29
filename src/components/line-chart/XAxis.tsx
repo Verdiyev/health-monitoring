@@ -10,7 +10,7 @@ import {
 
 import { linspace } from "./utils/LineChartUtils";
 import { format } from "date-fns";
-import { DefaultLineChartProps, GraphDimensions } from "./utils/ChartTypes";
+import { DefaultLineChartProps, GraphDimensions } from "./utils/LineChartTypes";
 
 type XAxisProps = {
   dimension: GraphDimensions;
