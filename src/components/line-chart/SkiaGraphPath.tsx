@@ -37,6 +37,7 @@ export default function SkiaGraphPath({
 
   return (
     <Group>
+      {/* Partially opaque lines */}
       <Mask mask={<Rect height={canvasHeight} width={initialAnimatedWidth} />}>
         <Path
           style="stroke"
@@ -55,7 +56,20 @@ export default function SkiaGraphPath({
           />
         )}
       </Mask>
+
+      {/* Actually line with gradient */}
       <Mask mask={<Rect height={canvasHeight} width={shownWidth} />}>
+        {areaChart && (
+          <LineChartGradient
+            skiaGraph={skiaGraph}
+            startX={startSpacing + yLabelWidth}
+            endX={startSpacing + yLabelWidth + graphWidth}
+            endY={canvasHeight - xLabelHeight}
+            color={color}
+          />
+        )}
+        <Path style="stroke" path={skiaGraph} strokeWidth={3} color={color} />
+
         {skiaGraph2 && (
           <Group>
             {areaChart && (
@@ -75,16 +89,6 @@ export default function SkiaGraphPath({
             />
           </Group>
         )}
-        {areaChart && (
-          <LineChartGradient
-            skiaGraph={skiaGraph}
-            startX={startSpacing + yLabelWidth}
-            endX={startSpacing + yLabelWidth + graphWidth}
-            endY={canvasHeight - xLabelHeight}
-            color={color}
-          />
-        )}
-        <Path style="stroke" path={skiaGraph} strokeWidth={3} color={color} />
       </Mask>
     </Group>
   );

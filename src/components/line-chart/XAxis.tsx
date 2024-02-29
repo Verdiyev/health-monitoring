@@ -20,6 +20,7 @@ type XAxisProps = {
 export default function XAxis({ dimension, graphProps }: XAxisProps) {
   const {
     data,
+    hideXLabels,
     hideXGridLines,
     xLabelHeight,
     yLabelWidth,
@@ -27,11 +28,12 @@ export default function XAxis({ dimension, graphProps }: XAxisProps) {
     topSpacing,
     noOfLabels,
     labelFontSize,
+    xLabelAngle,
   } = graphProps;
 
   const { canvasWidth, canvasHeight, graphHeight, graphWidth } = dimension;
 
-  const font = useFont(require("./../assets/Roboto.ttf"), labelFontSize);
+  const font = useFont(require("./../../assets/Roboto.ttf"), labelFontSize);
   const xAxisLabels = linspace(0, data.length - 1, noOfLabels, true);
 
   return (
@@ -46,26 +48,27 @@ export default function XAxis({ dimension, graphProps }: XAxisProps) {
       />
 
       {/* X-Axis labels */}
-      {xAxisLabels.map((xAxis: number, index: number) => {
-        const xValue = format(data[Math.round(xAxis)].timestamp, "kk:mm");
-        const textWidth = font?.measureText(xValue).width ?? 0;
-        const textHeight = font?.measureText(xValue).height ?? 0;
+      {!hideXLabels &&
+        xAxisLabels.map((xAxis: number, index: number) => {
+          const xValue = format(data[Math.round(xAxis)].timestamp, "kk:mm");
+          const textWidth = font?.measureText(xValue).width ?? 0;
+          const textHeight = font?.measureText(xValue).height ?? 0;
 
-        const yPos = canvasHeight - xLabelHeight / 2 + textHeight / 2;
-        const startPos = yLabelWidth + startSpacing;
-        const step = graphWidth / (noOfLabels - 1);
-        const xPos = startPos + step * index - textWidth / 2;
+          const yPos = canvasHeight - xLabelHeight / 2 + textHeight / 2;
+          const startPos = yLabelWidth + startSpacing;
+          const step = graphWidth / (noOfLabels - 1);
+          const xPos = startPos + step * index - textWidth / 2;
 
-        return (
-          <Group
-            key={index}
-            transform={[{ rotate: (Math.PI / 180) * 60 }]}
-            origin={{ x: xPos + textWidth / 2, y: yPos - textHeight / 2 }}
-          >
-            <Text x={xPos} y={yPos} text={xValue} font={font} />
-          </Group>
-        );
-      })}
+          return (
+            <Group
+              key={index}
+              transform={[{ rotate: (Math.PI / 180) * xLabelAngle }]}
+              origin={{ x: xPos + textWidth / 2, y: yPos - textHeight / 2 }}
+            >
+              <Text x={xPos} y={yPos} text={xValue} font={font} />
+            </Group>
+          );
+        })}
 
       {/* X-Axis grid lines */}
       {!hideXGridLines &&

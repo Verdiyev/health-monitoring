@@ -2,9 +2,10 @@ import React from "react";
 
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { LineChart, yAxisSides } from "react-native-gifted-charts";
 import { getChartMax, getChartSpacing, getChartYOffset } from "./ChartUtils";
 import { ChartData } from "./ChartDataTypes";
+import LineChart from "../line-chart/LineChart";
+import { LineDataPoint } from "../line-chart/utils/ChartTypes";
 
 type LineGraphPreviewProps = {
   data: ChartData[];
@@ -13,58 +14,30 @@ type LineGraphPreviewProps = {
 };
 
 export default function LineGraphPreview(props: LineGraphPreviewProps) {
-  const [chartParentWidth, setChartParentWidth] = React.useState(0);
-
-  const customLabel = (val) => () => {
-    return (
-      <View style={{ width: 70, marginLeft: 7 }}>
-        <Text variant="labelSmall">{val}</Text>
-      </View>
-    );
-  };
-
-  const displayedData = props.data.map((data: ChartData, index) => {
-    const NO_X_INTERVAL = 9;
-    return index % NO_X_INTERVAL
-      ? {
-          value: data.value,
-        }
-      : { value: data.value }; //, labelComponent: customLabel(index + 1)
-  });
+  const displayedData = props.data.map(
+    (item): LineDataPoint => ({
+      value: item.value,
+      timestamp: item.timestamp,
+    })
+  );
 
   return (
-    <View
-      style={styles.graphContainer}
-      onLayout={({ nativeEvent }) => {
-        setChartParentWidth(nativeEvent.layout.width);
-      }}
-    >
+    <View style={styles.graphContainer}>
       <LineChart
         areaChart
-        isAnimated
+        height={100}
         data={displayedData}
-        data2={props.data2}
-        color1={props.color}
-        color2={props.color}
-        strokeDashArray2={[2, 2]}
-        height={80}
-        width={chartParentWidth - 28}
-        spacing={getChartSpacing(props.data, chartParentWidth)}
-        disableScroll
-        hideYAxisText
-        hideDataPoints
-        hideRules
-        maxValue={getChartMax(props.data)}
-        yAxisOffset={getChartYOffset(props.data, props.data2)}
-        thickness={2}
-        yAxisThickness={0}
-        initialSpacing={0}
+        color={props.color}
+        disablePanGesture
+        hideXLabels
+        hideXGridLines
+        hideYAxisLine
+        hideYGridLines
+        hideYLabels
+        xLabelHeight={20}
+        startSpacing={0}
         endSpacing={0}
-        startFillColor={props.color}
-        endFillColor={props.color}
-        startOpacity={props.data2 == undefined ? 0.4 : 0.2}
-        endOpacity={props.data2 == undefined ? 0.1 : 0.05}
-        xAxisColor="lightgray"
+        yLabelWidth={0}
       />
     </View>
   );
@@ -73,6 +46,8 @@ export default function LineGraphPreview(props: LineGraphPreviewProps) {
 const styles = StyleSheet.create({
   graphContainer: {
     flex: 1,
-    paddingLeft: 16,
+    width: "100%",
+    height: 80,
+    paddingHorizontal: 16,
   },
 });

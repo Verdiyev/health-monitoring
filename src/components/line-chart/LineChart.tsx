@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useEffect } from "react";
 import { Canvas, Skia } from "@shopify/react-native-skia";
 import {
@@ -27,8 +27,9 @@ import {
 import { generateGraph, getDataRange } from "./utils/LineChartUtils";
 
 export default function LineChart(props: LineChartProps) {
-  const [CANVAS_WIDTH, setCanvasWidth] = React.useState(0);
+  const [width, setWidth] = React.useState(0);
 
+  console.log("LINE CHART BUIULD");
   const {
     data,
     data2,
@@ -44,10 +45,12 @@ export default function LineChart(props: LineChartProps) {
     topSpacing = 30,
     upperOffset = 5,
     lowerOffset = 5,
+    xLabelAngle = 0,
     areaChart = false,
     hideYLabels = false,
     hideYAxisLine = false,
     hideYGridLines = false,
+    hideXLabels = false,
     hideXGridLines = false,
     disablePanGesture = false,
     shownValue = useSharedValue(0),
@@ -71,9 +74,11 @@ export default function LineChart(props: LineChartProps) {
     upperOffset,
     lowerOffset,
     areaChart,
+    xLabelAngle,
     hideYLabels,
     hideYAxisLine,
     hideYGridLines,
+    hideXLabels,
     hideXGridLines,
     disablePanGesture,
     shownValue,
@@ -84,12 +89,12 @@ export default function LineChart(props: LineChartProps) {
   const LEFT_SPACING = yLabelWidth + startSpacing;
   const RIGHT_SPACING = endSpacing;
 
-  const GRAPH_HEIGHT = height - xLabelHeight - topSpacing;
-  const GRAPH_WIDTH = CANVAS_WIDTH - LEFT_SPACING - RIGHT_SPACING;
+  const GRAPH_HEIGHT = Math.max(0, height - xLabelHeight - topSpacing);
+  const GRAPH_WIDTH = Math.max(0, width - LEFT_SPACING - RIGHT_SPACING);
 
   const graphDimension: GraphDimensions = {
     canvasHeight: height,
-    canvasWidth: CANVAS_WIDTH,
+    canvasWidth: width,
     graphWidth: GRAPH_WIDTH,
     graphHeight: GRAPH_HEIGHT,
   };
@@ -125,8 +130,9 @@ export default function LineChart(props: LineChartProps) {
   const bezierGraph2 = graph2 ? parse(graph2.path) : undefined;
 
   const skiaGraph = Skia.Path.MakeFromSVGString(graph.path) ?? Skia.Path.Make();
-  const skiaGraph2 =
-    Skia.Path.MakeFromSVGString(graph2 ? graph2.path : "") ?? Skia.Path.Make();
+  const skiaGraph2 = graph2
+    ? Skia.Path.MakeFromSVGString(graph2.path) ?? Skia.Path.Make()
+    : undefined;
 
   const { panX, isPanGestureActive, panGesture } = useGraphPanGesture({
     enabled: !disablePanGesture,
@@ -149,13 +155,11 @@ export default function LineChart(props: LineChartProps) {
 
   useDerivedValue(() => {
     runOnJS(getXDate)(panX.value);
-
     shownValue.value = interpolate(
       cursorY.value ?? 0,
       [height - xLabelHeight, topSpacing],
       [minValue, maxValue]
     );
-
     shownValue2.value = interpolate(
       cursorY2.value ?? 0,
       [height - xLabelHeight, topSpacing],
@@ -166,7 +170,7 @@ export default function LineChart(props: LineChartProps) {
   return (
     <GestureHandlerRootView
       style={styles(height).container}
-      onLayout={({ nativeEvent }) => setCanvasWidth(nativeEvent.layout.width)}
+      onLayout={({ nativeEvent }) => setWidth(nativeEvent.layout.width)}
     >
       <Canvas style={styles(height).canvas}>
         <XAxis dimension={graphDimension} graphProps={defaultProps} />
@@ -224,7 +228,6 @@ const styles = (height: number) =>
       width: "100%",
       height: height,
       position: "relative",
-      paddingRight: 16,
     },
     canvas: {
       width: "100%",

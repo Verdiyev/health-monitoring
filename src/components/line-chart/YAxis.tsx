@@ -36,7 +36,7 @@ export default function YAxis({
   } = graphProps;
   const { canvasWidth, graphHeight } = dimension;
 
-  const font = useFont(require("./../assets/Roboto.ttf"), labelFontSize);
+  const font = useFont(require("./../../assets/Roboto.ttf"), labelFontSize);
   const yAxisLabels = linspace(minValue, maxValue, noOfSteps, true);
 
   return (
