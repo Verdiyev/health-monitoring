@@ -1,7 +1,7 @@
 import { SharedValue } from "react-native-reanimated";
 import { ScaleTime, ScaleLinear } from "d3";
 
-export type DataPoint = {
+export type LineDataPoint = {
   value: number;
   timestamp: Date;
 };
@@ -14,8 +14,8 @@ export type GraphDimensions = {
 };
 
 export type LineChartProps = {
-  data: DataPoint[];
-  data2?: DataPoint[];
+  data: LineDataPoint[];
+  data2?: LineDataPoint[];
   color: string;
   height?: number;
   noOfSteps?: number;
@@ -28,10 +28,12 @@ export type LineChartProps = {
   labelFontSize?: number;
   upperOffset?: number;
   lowerOffset?: number;
+  xLabelAngle?: number;
   areaChart?: boolean;
   hideYLabels?: boolean;
   hideYAxisLine?: boolean;
   hideYGridLines?: boolean;
+  hideXLabels?: boolean;
   hideXGridLines?: boolean;
   disablePanGesture?: boolean;
   shownValue?: SharedValue<number>;
@@ -40,8 +42,8 @@ export type LineChartProps = {
 };
 
 export type DefaultLineChartProps = {
-  data: DataPoint[];
-  data2: DataPoint[];
+  data: LineDataPoint[];
+  data2: LineDataPoint[];
   color: string;
   height: number;
   noOfSteps: number;
@@ -55,9 +57,11 @@ export type DefaultLineChartProps = {
   lowerOffset: number;
   labelFontSize: number;
   areaChart: boolean;
+  xLabelAngle: number;
   hideYLabels: boolean;
   hideYAxisLine: boolean;
   hideYGridLines: boolean;
+  hideXLabels: boolean;
   hideXGridLines: boolean;
   disablePanGesture: boolean;
   shownValue: SharedValue<number>;

@@ -1,5 +1,12 @@
-import { curveBasis, line, scaleLinear, scaleTime } from "d3";
-import { DataPoint } from "./ChartTypes";
+import {
+  ScaleLinear,
+  ScaleTime,
+  curveBasis,
+  line,
+  scaleLinear,
+  scaleTime,
+} from "d3";
+import { LineDataPoint } from "./ChartTypes";
 
 export function linspace(
   start: number,
@@ -12,7 +19,10 @@ export function linspace(
   return Array.from({ length: num }, (_, i) => start + step * i);
 }
 
-export const getDataRange = (data: DataPoint[], data2?: DataPoint[]) => {
+export const getDataRange = (
+  data: LineDataPoint[],
+  data2?: LineDataPoint[]
+) => {
   const minData = Math.min(
     ...data.map((val) => val.value),
     ...(data2 ?? []).map((val) => val.value)
@@ -32,20 +42,28 @@ export const hexToRGB = (hexString: string, alpha?: number) => {
 };
 
 type GenerateGraphParams = {
-  data: DataPoint[];
+  data: LineDataPoint[];
   yFrom: number[];
   yTo: number[];
   xFrom: Date[];
   xTo: number[];
 };
 
-export function generateGraph(params: GenerateGraphParams) {
+type GenerateGraphResult = {
+  x: ScaleTime<number, number, never>;
+  y: ScaleLinear<number, number, never>;
+  path: string;
+};
+
+export function generateGraph(
+  params: GenerateGraphParams
+): GenerateGraphResult {
   const x = scaleTime().domain(params.xFrom).range(params.xTo);
   const y = scaleLinear().domain(params.yFrom).range(params.yTo);
 
-  const curvedLine = line<DataPoint>()
-    .x((d: DataPoint) => x(new Date(d.timestamp)))
-    .y((d: DataPoint) => y(d.value))
+  const curvedLine = line<LineDataPoint>()
+    .x((d: LineDataPoint) => x(new Date(d.timestamp)))
+    .y((d: LineDataPoint) => y(d.value))
     .curve(curveBasis)(params.data);
 
   return {
