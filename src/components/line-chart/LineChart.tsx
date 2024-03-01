@@ -52,6 +52,7 @@ export default function LineChart(props: LineChartProps) {
     hideXLabels = false,
     hideXGridLines = false,
     disablePanGesture = false,
+    isActive = useSharedValue(false),
     shownValue = useSharedValue(0),
     shownValue2 = useSharedValue(0),
     shownDate = useSharedValue(new Date().toISOString()),
@@ -80,6 +81,7 @@ export default function LineChart(props: LineChartProps) {
     hideXLabels,
     hideXGridLines,
     disablePanGesture,
+    isActive,
     shownValue,
     shownValue2,
     shownDate,
@@ -133,7 +135,8 @@ export default function LineChart(props: LineChartProps) {
     ? Skia.Path.MakeFromSVGString(graph2.path) ?? Skia.Path.Make()
     : undefined;
 
-  const { panX, isPanGestureActive, panGesture } = useGraphPanGesture({
+  const { panX, panGesture } = useGraphPanGesture({
+    isActive: isActive,
     enabled: !disablePanGesture,
     startSpacing: LEFT_SPACING,
     xIndices: xValues,
@@ -145,7 +148,7 @@ export default function LineChart(props: LineChartProps) {
 
   useEffect(() => {
     const lastX = xValues[xValues.length - 1];
-    panX.value = withTiming(lastX, { duration: 2000 });
+    panX.value = withTiming(lastX, { duration: 1000 });
   });
 
   const getXDate = (xValue: number) => {
@@ -190,20 +193,10 @@ export default function LineChart(props: LineChartProps) {
           color={color}
         />
 
-        <Cursor
-          x={panX}
-          y={cursorY}
-          active={isPanGestureActive}
-          color={color}
-        />
+        <Cursor x={panX} y={cursorY} active={isActive} color={color} />
 
         {data2 && (
-          <Cursor
-            x={panX}
-            y={cursorY2}
-            active={isPanGestureActive}
-            color={color}
-          />
+          <Cursor x={panX} y={cursorY2} active={isActive} color={color} />
         )}
       </Canvas>
 

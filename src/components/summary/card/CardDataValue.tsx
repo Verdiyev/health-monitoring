@@ -26,10 +26,10 @@ type DataValueProp = {
   value: SharedValue<number>;
   value2?: SharedValue<number>;
   timestamp: SharedValue<string>;
+  isActive: SharedValue<boolean>;
   unit: string;
   unit2?: string;
   color: string;
-  showExactTime: boolean;
 };
 
 const getLastUpdatedText = (lastData: Date, showExactTime: boolean): string => {
@@ -50,7 +50,6 @@ const getLastUpdatedText = (lastData: Date, showExactTime: boolean): string => {
 
 export default function CardDataValue(props: DataValueProp) {
   const valueFont = useFont(require(BOLD_FONT_PATH), 26);
-  // const unitFont = useFont(require(BOLD_FONT_PATH), 22);
   const timestampFont = useFont(require(MEDIUM_FONT_PATH), 14);
 
   const shownValue = useDerivedValue(
@@ -63,13 +62,13 @@ export default function CardDataValue(props: DataValueProp) {
   );
 
   const shownTimestamp = useSharedValue("");
-  const convertTimestamp = (timeString: string) => {
+  const convertTimestamp = (timeString: string, showExactTime: boolean) => {
     const date = new Date(timeString);
-    const durationString = getLastUpdatedText(date, props.showExactTime);
+    const durationString = getLastUpdatedText(date, showExactTime);
     shownTimestamp.value = durationString;
   };
   useDerivedValue(() => {
-    runOnJS(convertTimestamp)(props.timestamp.value);
+    runOnJS(convertTimestamp)(props.timestamp.value, props.isActive.value);
   });
 
   const valueHeight = valueFont?.measureText(shownValue.value).height ?? 0;

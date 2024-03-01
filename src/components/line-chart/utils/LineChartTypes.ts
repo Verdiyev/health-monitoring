@@ -36,6 +36,7 @@ export type LineChartProps = {
   hideXLabels?: boolean;
   hideXGridLines?: boolean;
   disablePanGesture?: boolean;
+  isActive?: SharedValue<boolean>;
   shownValue?: SharedValue<number>;
   shownValue2?: SharedValue<number>;
   shownDate?: SharedValue<string>;
@@ -64,6 +65,7 @@ export type DefaultLineChartProps = {
   hideXLabels: boolean;
   hideXGridLines: boolean;
   disablePanGesture: boolean;
+  isActive: SharedValue<boolean>;
   shownValue: SharedValue<number>;
   shownValue2: SharedValue<number>;
   shownDate: SharedValue<string>;
