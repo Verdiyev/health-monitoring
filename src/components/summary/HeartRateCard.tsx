@@ -1,16 +1,9 @@
 import React from "react";
-
-import { StyleSheet, View } from "react-native";
-import { ActivityIndicator, Card } from "react-native-paper";
-
-// import CardData from "./card/CardData";
-import CardTitle from "./card/CardTitle";
-// import CardPreview from "./card/CardPreview";
+import { StyleSheet } from "react-native";
 
 import { DATA_RED } from "../../constants/colors";
-import { ChartData, DataTimeframe } from "../charts/ChartDataTypes";
+import { ChartData } from "../charts/ChartDataTypes";
 import { generateData } from "./random";
-import { sampleDataWithTimeframe } from "../../utils/SummaryUtils";
 import { readFile, saveFile } from "../../utils/FileUtils";
 import HealthCard from "./card/HealthCard";
 
@@ -20,7 +13,7 @@ const FILE_NAME = "HeartRate";
 const loadData = async (setHeartRateData: (x: ChartData[]) => void) => {
   const content = await readFile(FILE_NAME);
 
-  if (content.length >= 0) {
+  if (content.length == 0) {
     const genData = generateData(60, 120, 2000);
     setHeartRateData(genData);
 
@@ -30,7 +23,12 @@ const loadData = async (setHeartRateData: (x: ChartData[]) => void) => {
   }
 
   // Load existing data in file
-  const loadedData: ChartData[] = JSON.parse(content);
+  const rawData = JSON.parse(content);
+  // Convert date string into Date object
+  const loadedData: ChartData[] = rawData.map((item) => ({
+    value: item.value,
+    timestamp: new Date(item.timestamp),
+  }));
   setHeartRateData(loadedData);
 };
 
@@ -46,7 +44,7 @@ export default function HeartRateCard() {
       title={"Heart Rate"}
       titleIcon={"heart-pulse"}
       data={heartRateData}
-      unit={"bpm"}
+      unit={HEART_RATE_UNIT}
       color={DATA_RED}
     />
   );
