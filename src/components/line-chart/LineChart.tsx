@@ -29,7 +29,6 @@ import { generateGraph, getDataRange } from "./utils/LineChartUtils";
 export default function LineChart(props: LineChartProps) {
   const [width, setWidth] = React.useState(0);
 
-  console.log("LINE CHART BUIULD");
   const {
     data,
     data2,

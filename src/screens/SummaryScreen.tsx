@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import HeartRateCard from "../components/summary/HeartRateCard";
-import BloodPressureCard from "../components/summary/BloodPressureCard";
+// import BloodPressureCard from "../components/summary/BloodPressureCard";
 import RespiratoryRateCard from "../components/summary/RespiratoryRateCard";
 
 export default function SummaryScreen() {
@@ -10,9 +10,9 @@ export default function SummaryScreen() {
       <View style={styles.contentsContainer}>
         <HeartRateCard />
         <View style={{ height: 12 }} />
-        <BloodPressureCard />
+        {/* <BloodPressureCard />
         <View style={{ height: 12 }} />
-        <RespiratoryRateCard />
+        <RespiratoryRateCard /> */}
       </View>
     </ScrollView>
   );

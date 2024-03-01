@@ -41,7 +41,6 @@ export async function readFile(fileName: string): Promise<string> {
   }
 
   const text = await FileSystem.readAsStringAsync(fileUri(fileName));
-  console.log("Read text from file:", text);
   return text;
 }
 
