@@ -1,4 +1,11 @@
-import { SkPath, Group, Mask, Rect, Path } from "@shopify/react-native-skia";
+import {
+  SkPath,
+  Group,
+  Mask,
+  Rect,
+  Path,
+  DashPathEffect,
+} from "@shopify/react-native-skia";
 import { useEffect } from "react";
 import { Dimensions } from "react-native";
 import {
@@ -26,7 +33,7 @@ export default function SkiaGraphPath({
   graphProps,
   color,
 }: SkiaGraphPathProps) {
-  const { canvasHeight, graphWidth } = dimension;
+  const { canvasHeight, canvasWidth, graphWidth } = dimension;
   const { areaChart, startSpacing, yLabelWidth, xLabelHeight } = graphProps;
 
   const initialAnimatedWidth = useSharedValue(0);
@@ -38,7 +45,9 @@ export default function SkiaGraphPath({
   return (
     <Group>
       {/* Partially opaque lines */}
-      <Mask mask={<Rect height={canvasHeight} width={initialAnimatedWidth} />}>
+      <Mask
+        mask={<Rect x={shownWidth} height={canvasHeight} width={canvasWidth} />}
+      >
         <Path
           style="stroke"
           path={skiaGraph}
@@ -56,7 +65,6 @@ export default function SkiaGraphPath({
           />
         )}
       </Mask>
-
       {/* Actually line with gradient */}
       <Mask mask={<Rect height={canvasHeight} width={shownWidth} />}>
         {areaChart && (
@@ -86,7 +94,9 @@ export default function SkiaGraphPath({
               path={skiaGraph2}
               strokeWidth={3}
               color={color}
-            />
+            >
+              <DashPathEffect intervals={[6, 3]} />
+            </Path>
           </Group>
         )}
       </Mask>

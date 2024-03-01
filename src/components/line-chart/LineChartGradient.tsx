@@ -9,7 +9,7 @@ import {
 } from "@shopify/react-native-skia";
 import { hexToRGB } from "./utils/LineChartUtils";
 
-const Y_OFFSET = 1.5;
+const Y_OFFSET = 1;
 
 type LineChartGradientProps = {
   skiaGraph: SkPath;
