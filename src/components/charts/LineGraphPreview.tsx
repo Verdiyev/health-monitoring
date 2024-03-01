@@ -1,8 +1,6 @@
 import React from "react";
 
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
-import { getChartMax, getChartSpacing, getChartYOffset } from "./ChartUtils";
 import { ChartData } from "./ChartDataTypes";
 import LineChart from "../line-chart/LineChart";
 import { LineDataPoint } from "../line-chart/utils/LineChartTypes";
@@ -20,6 +18,14 @@ export default function LineGraphPreview(props: LineGraphPreviewProps) {
       timestamp: item.timestamp,
     })
   );
+  const displayedData2 = props.data2
+    ? props.data2.map(
+        (item): LineDataPoint => ({
+          value: item.value,
+          timestamp: item.timestamp,
+        })
+      )
+    : undefined;
 
   return (
     <View style={styles.graphContainer}>
@@ -27,6 +33,7 @@ export default function LineGraphPreview(props: LineGraphPreviewProps) {
         areaChart
         height={100}
         data={displayedData}
+        data2={displayedData2}
         color={props.color}
         disablePanGesture
         hideXLabels
@@ -34,6 +41,7 @@ export default function LineGraphPreview(props: LineGraphPreviewProps) {
         hideYAxisLine
         hideYGridLines
         hideYLabels
+        lowerOffset={30}
         xLabelHeight={20}
         startSpacing={0}
         endSpacing={0}
@@ -48,6 +56,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: 80,
-    paddingHorizontal: 16,
+    paddingRight: 4,
   },
 });
