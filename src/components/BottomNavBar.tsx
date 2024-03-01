@@ -2,8 +2,11 @@ import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
 import SummaryScreen from "../screens/SummaryScreen";
 import HistoryScreen from "../screens/HistoryScreen";
+import ListenScreen from "../screens/ListenScreen";
 
 const HomeRoute = () => <SummaryScreen />;
+
+const ListenRoute = () => <ListenScreen />;
 
 const HistoryRoute = () => <HistoryScreen />;
 
@@ -18,6 +21,12 @@ const BottomAppBar = () => {
       focusedIcon: "heart",
       unfocusedIcon: "heart-outline",
     },
+    {
+      key: "listen",
+      title: "Listen",
+      focusedIcon: "clipboard-pulse",
+      unfocusedIcon: "clipboard-pulse-outline",
+    },
     { key: "history", title: "History", focusedIcon: "history" },
     {
       key: "profile",
@@ -29,6 +38,7 @@ const BottomAppBar = () => {
 
   const renderScene = BottomNavigation.SceneMap({
     home: HomeRoute,
+    listen: ListenRoute,
     history: HistoryRoute,
     profile: ProfileRoute,
   });
