@@ -1,17 +1,11 @@
 import React from "react";
-
-import { StyleSheet, View } from "react-native";
-import { Text, Card, ActivityIndicator } from "react-native-paper";
-
-import CardTitle from "./card/CardTitle";
-import CardPreview from "./card/CardPreview";
-import CardData from "./card/CardData";
+import { StyleSheet } from "react-native";
 
 import { DATA_YELLOW } from "../../constants/colors";
 import { generateData } from "./random";
-import { ChartData, DataTimeframe } from "../charts/ChartDataTypes";
-import { sampleDataWithTimeframe } from "../../utils/SummaryUtils";
+import { ChartData } from "../charts/ChartDataTypes";
 import { readFile, saveFile } from "../../utils/FileUtils";
+import HealthCard from "./card/HealthCard";
 
 const SYS_UNIT = "sys";
 const DIA_UNIT = "dia";
@@ -47,60 +41,17 @@ export default function BloodPressureCard() {
   //   if (diaData.length == 0) loadData(-20, setDiaData);
   // });
 
-  const [openCard, setOpenCard] = React.useState(false);
-  const [selectedTimeframe, setSelectedTimeframe] =
-    React.useState<DataTimeframe>("5 mins");
-
-  const displayedSys = sysData.length
-    ? sampleDataWithTimeframe(selectedTimeframe, sysData)
-    : [];
-  const displayedDia = diaData.length
-    ? sampleDataWithTimeframe(selectedTimeframe, diaData)
-    : [];
-
   return (
-    <Card style={styles.cardContainer}>
-      <CardTitle
-        text={"Blood Pressure"}
-        icon={"clipboard-pulse-outline"}
-        isOpen={openCard}
-        setOpen={setOpenCard}
-      />
-
-      {displayedSys.length == 0 ? (
-        <View style={styles.circularLoadingContainer}>
-          <ActivityIndicator />
-        </View>
-      ) : openCard ? (
-        <CardData
-          data={displayedSys}
-          unit={SYS_UNIT}
-          data2={displayedDia}
-          unit2={DIA_UNIT}
-          color={DATA_YELLOW}
-          timeframe={selectedTimeframe}
-          setTimeframe={setSelectedTimeframe}
-        />
-      ) : (
-        <CardPreview
-          data={displayedSys}
-          data2={displayedDia}
-          color={DATA_YELLOW}
-          unit={SYS_UNIT}
-          unit2={DIA_UNIT}
-        />
-      )}
-    </Card>
+    <HealthCard
+      title={"Blood Pressure"}
+      titleIcon={"clipboard-pulse-outline"}
+      data={sysData}
+      data2={diaData}
+      unit={SYS_UNIT}
+      unit2={DIA_UNIT}
+      color={DATA_YELLOW}
+    />
   );
 }
 
-const styles = StyleSheet.create({
-  cardContainer: {
-    padding: 16,
-  },
-  circularLoadingContainer: {
-    height: 100,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+const styles = StyleSheet.create({});

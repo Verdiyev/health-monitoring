@@ -1,83 +1,61 @@
 import React from "react";
 
 import { StyleSheet, View } from "react-native";
-import { LineChart } from "react-native-gifted-charts";
-import { getChartSpacing, getChartYOffset } from "./ChartUtils";
 import { ChartData } from "./ChartDataTypes";
-import { format } from "date-fns";
+import LineChart from "../line-chart/LineChart";
+import { LineDataPoint } from "../line-chart/utils/LineChartTypes";
+import { SharedValue, useSharedValue } from "react-native-reanimated";
 
 type DataLineGraphProps = {
   data: ChartData[];
   data2?: ChartData[];
   color: string;
-  setViewIndex: (i: number) => void;
+  isActive: SharedValue<boolean>;
+  graphValue: SharedValue<number>;
+  graphValue2?: SharedValue<number>;
+  graphDate: SharedValue<string>;
 };
 
 export default function DataLineGraph(props: DataLineGraphProps) {
-  const [chartParentWidth, setChartParentWidth] = React.useState(0);
+  const displayedData = props.data.map(
+    (item): LineDataPoint => ({
+      value: item.value,
+      timestamp: item.timestamp,
+    })
+  );
 
-  const NO_XAXIS_LABELS = 4;
-  const interval = Math.round(props.data.length / NO_XAXIS_LABELS);
-
-  const displayedData = props.data.map((hrData, index) => {
-    return {
-      value: hrData.value,
-      label: Number.isInteger(index / interval)
-        ? format(hrData.timestamp, "kk:mm")
-        : "",
-    };
-  });
+  const displayedData2 = props.data2
+    ? props.data2.map(
+        (item): LineDataPoint => ({
+          value: item.value,
+          timestamp: item.timestamp,
+        })
+      )
+    : undefined;
 
   return (
-    <View
-      style={{ paddingBottom: 20 }}
-      onLayout={({ nativeEvent }) => {
-        setChartParentWidth(nativeEvent.layout.width);
-      }}
-    >
+    <View style={styles.container}>
       <LineChart
-        isAnimated
-        rotateLabel
         data={displayedData}
-        data2={props.data2}
+        data2={displayedData2}
         color={props.color}
-        color2={props.color}
-        strokeDashArray2={[2, 2]}
-        width={chartParentWidth - 45}
-        spacing={getChartSpacing(props.data, chartParentWidth - 50)}
-        height={150}
-        hideDataPoints
-        disableScroll
-        yAxisOffset={getChartYOffset(displayedData, props.data2)}
-        noOfSections={4}
-        initialSpacing={10}
-        endSpacing={10}
-        thickness={3}
-        rulesType="dash"
-        rulesColor="gray"
-        yAxisColor="white"
-        yAxisThickness={0}
-        yAxisTextStyle={{ color: "gray" }}
-        xAxisColor="lightgray"
-        xAxisLabelTextStyle={styles.xAxisLabelText}
-        getPointerProps={(pointer) => {
-          props.setViewIndex(pointer.pointerIndex);
-        }}
-        pointerConfig={{
-          pointerStripColor: "gray",
-          pointerStripWidth: 4,
-          pointerColor: "lightgray",
-        }}
+        xLabelAngle={60}
+        yLabelWidth={40}
+        startSpacing={20}
+        endSpacing={20}
+        hideXGridLines
+        hideYAxisLine
+        isActive={props.isActive}
+        shownValue={props.graphValue}
+        shownValue2={props.graphValue2 ?? useSharedValue(0)}
+        shownDate={props.graphDate}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  xAxisLabelText: {
-    color: "black",
-    fontSize: 12,
-    width: 36,
-    marginLeft: -10,
+  container: {
+    paddingRight: 16,
   },
 });

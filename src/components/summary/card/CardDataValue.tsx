@@ -1,22 +1,35 @@
 import React from "react";
 
-import { StyleSheet, View, ViewStyle } from "react-native";
-import { Text } from "react-native-paper";
-import { ChartData } from "../../charts/ChartDataTypes";
+import { StyleSheet, View } from "react-native";
 import {
   differenceInSeconds,
   format,
   formatDistanceToNow,
   formatDistanceToNowStrict,
 } from "date-fns";
+import {
+  SharedValue,
+  runOnJS,
+  useDerivedValue,
+  useSharedValue,
+} from "react-native-reanimated";
+import { Canvas, Text, useFont } from "@shopify/react-native-skia";
+
+const BOLD_FONT_PATH = "./../../../assets/Roboto-Bold.ttf";
+const MEDIUM_FONT_PATH = "./../../../assets/Roboto-Medium.ttf";
+
+const CANVAS_WIDTH = 140;
+const START_SPACING = 4;
+const TEXT_BOTTOM = 6;
 
 type DataValueProp = {
-  chartData: ChartData;
+  value: SharedValue<number>;
+  value2?: SharedValue<number>;
+  timestamp: SharedValue<string>;
+  isActive: SharedValue<boolean>;
   unit: string;
-  chartData2?: ChartData;
   unit2?: string;
   color: string;
-  showExactTime: boolean;
 };
 
 const getLastUpdatedText = (lastData: Date, showExactTime: boolean): string => {
@@ -36,34 +49,82 @@ const getLastUpdatedText = (lastData: Date, showExactTime: boolean): string => {
 };
 
 export default function CardDataValue(props: DataValueProp) {
-  const coloredStyle = styles(props.color);
+  const valueFont = useFont(require(BOLD_FONT_PATH), 26);
+  const timestampFont = useFont(require(MEDIUM_FONT_PATH), 14);
+
+  const shownValue = useDerivedValue(
+    () => props.value.value.toFixed(1) + " " + props.unit
+  );
+  const shownValue2 = useDerivedValue(() =>
+    props.value2 && props.unit2
+      ? props.value2.value.toFixed(1) + " " + props.unit2
+      : ""
+  );
+
+  const shownTimestamp = useSharedValue("");
+  const convertTimestamp = (timeString: string, showExactTime: boolean) => {
+    const date = new Date(timeString);
+    const durationString = getLastUpdatedText(date, showExactTime);
+    shownTimestamp.value = durationString;
+  };
+  useDerivedValue(() => {
+    runOnJS(convertTimestamp)(props.timestamp.value, props.isActive.value);
+  });
+
+  const valueHeight = valueFont?.measureText(shownValue.value).height ?? 0;
+  const value2Height = valueFont?.measureText(shownValue2.value).height ?? 0;
+  const timeHeight =
+    timestampFont?.measureText(shownTimestamp.value).height ?? 0;
+
   return (
-    <View style={coloredStyle.dataValueContainer}>
-      <Text variant="headlineMedium" style={coloredStyle.dataText}>
-        {props.chartData.value} {props.unit}
-      </Text>
-      {props.chartData2 && props.unit2 && (
-        <Text variant="headlineMedium" style={coloredStyle.dataText}>
-          {props.chartData2.value} {props.unit2}
-        </Text>
+    <View style={styles.container}>
+      <Canvas
+        style={{ height: valueHeight + TEXT_BOTTOM, width: CANVAS_WIDTH }}
+      >
+        <Text
+          x={START_SPACING}
+          y={valueHeight}
+          text={shownValue}
+          font={valueFont}
+          color={props.color}
+        />
+      </Canvas>
+      {props.value2 && props.unit2 && (
+        <Canvas
+          style={{ height: value2Height + TEXT_BOTTOM, width: CANVAS_WIDTH }}
+        >
+          <Text
+            x={START_SPACING}
+            y={valueHeight}
+            text={shownValue2}
+            font={valueFont}
+            color={props.color}
+          />
+        </Canvas>
       )}
-      <Text variant="labelLarge" style={coloredStyle.updatedText}>
-        {getLastUpdatedText(props.chartData.timestamp, props.showExactTime)}
-      </Text>
+      <View style={{ height: 2 }} />
+      <Canvas style={{ height: timeHeight + TEXT_BOTTOM, width: CANVAS_WIDTH }}>
+        <Text
+          x={START_SPACING}
+          y={timeHeight}
+          text={shownTimestamp}
+          font={timestampFont}
+          color={props.color}
+        />
+      </Canvas>
     </View>
   );
 }
 
-const styles = (color) =>
-  StyleSheet.create({
-    dataValueContainer: {
-      alignSelf: "center",
-    },
-    dataText: {
-      fontWeight: "bold",
-      color: color,
-    },
-    updatedText: {
-      color: color,
-    },
-  });
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    // backgroundColor: "red",
+  },
+  canvas: {
+    alignSelf: "center",
+    width: 120,
+    height: 80,
+    // backgroundColor: "red",
+  },
+});
