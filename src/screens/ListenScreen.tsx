@@ -1,6 +1,6 @@
 import { Canvas, Mask, Path, Rect, Skia } from "@shopify/react-native-skia";
 import React from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { useScanner } from "../components/listen/useScanner";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Button } from "react-native-paper";
@@ -55,12 +55,11 @@ export default function ListenScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>ListenScreen</Text>
+      <View style={{ flex: 1 }} />
       <Canvas
         style={{
           width: width,
           height: CANVAS_HEIGHT,
-          backgroundColor: "green",
         }}
       >
         <Path
@@ -74,12 +73,13 @@ export default function ListenScreen() {
             path={previousPath}
             style={"stroke"}
             strokeWidth={2}
-            color={"orange"}
+            color={"red"}
           />
         </Mask>
-        <Rect x={xValue} y={40} width={5} height={20} />
+        <Rect x={xValue} y={0} width={10} height={100} color={"white"} />
       </Canvas>
-      <Button mode="contained" onPress={addNewData}>
+      <View style={{ flex: 1 }} />
+      <Button mode="contained" style={styles.button} onPress={addNewData}>
         Add data
       </Button>
     </View>
@@ -88,6 +88,9 @@ export default function ListenScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "red",
+    height: "100%",
+  },
+  button: {
+    margin: 12,
   },
 });
