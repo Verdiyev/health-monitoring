@@ -1,16 +1,18 @@
-import { Canvas, Mask, Path, Rect, Skia } from "@shopify/react-native-skia";
 import React from "react";
+
+import { Canvas, Mask, Path, Rect, Skia } from "@shopify/react-native-skia";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useScanner } from "../components/listen/useScanner";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
-import { Button } from "react-native-paper";
+import { Button, useTheme } from "react-native-paper";
 
-const CANVAS_HEIGHT = 100;
+const CANVAS_HEIGHT = 200;
 
 const FRAME_TIME = 17;
 const TOTAL_DURATION = 5000;
 
 export default function ListenScreen() {
+  const theme = useTheme();
   const width = Dimensions.get("screen").width;
 
   const previousPath = useSharedValue(Skia.Path.Make());
@@ -27,29 +29,37 @@ export default function ListenScreen() {
       previousPath.value = currentPath.value.copy();
       currentPath.value = Skia.Path.Make().moveTo(0, CANVAS_HEIGHT / 2);
     } else {
-      const newData = incoming.value;
-      if (newData.length == 0) {
+      if (incoming.value.length == 0) {
         currentPath.value.lineTo(xValue.value, CANVAS_HEIGHT / 2);
         return;
       }
-      while (newData.length > 0) {
-        const data = newData[0];
+      while (incoming.value.length > 0) {
+        const data = incoming.value[0];
         currentPath.value.lineTo(xValue.value, CANVAS_HEIGHT / 2 + data);
-        newData.shift();
+        incoming.value = incoming.value.slice(1);
       }
     }
   });
 
-  function getRandomInt(max) {
+  function getRandomInt(max: number) {
     return Math.floor(Math.random() * max);
   }
 
   const addNewData = () => {
-    const NO_DATA = 5;
+    const NO_DATA = 50;
+    const MAX = 50;
+    const MIN = 0;
+    let prevData = 0;
+
     for (let i = 0; i < NO_DATA; i++) {
       setTimeout(() => {
-        incoming.value = [getRandomInt(100) - 50];
-      }, FRAME_TIME * i * 2);
+        let data = getRandomInt(CANVAS_HEIGHT) - CANVAS_HEIGHT / 2;
+        while (Math.abs(data - prevData) > 5)
+          data = getRandomInt(CANVAS_HEIGHT) - CANVAS_HEIGHT / 2;
+
+        incoming.value = [...incoming.value, data];
+        prevData = data;
+      }, 10 * i);
     }
   };
 
@@ -76,7 +86,13 @@ export default function ListenScreen() {
             color={"red"}
           />
         </Mask>
-        <Rect x={xValue} y={0} width={10} height={100} color={"white"} />
+        <Rect
+          x={xValue}
+          y={0}
+          width={10}
+          height={CANVAS_HEIGHT}
+          color={theme.colors.background}
+        />
       </Canvas>
       <View style={{ flex: 1 }} />
       <Button mode="contained" style={styles.button} onPress={addNewData}>
