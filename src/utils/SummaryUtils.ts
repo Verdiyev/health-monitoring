@@ -16,20 +16,23 @@ export const sampleDataWithTimeframe = (
   const withinTimeframe = data.filter((hrData) =>
     isWithinInterval(hrData.timestamp, {
       start: latestData.timestamp,
-      end: addSeconds(latestData.timestamp, -timeframeSeconds.get(timeframe)),
+      end: addSeconds(latestData.timestamp, -timeframeSeconds.get(timeframe)!),
     })
   );
 
   let intervalStart = withinTimeframe[0].timestamp;
-  let intervalEnd = addSeconds(intervalStart, timeframeInterval.get(timeframe));
+  let intervalEnd = addSeconds(
+    intervalStart,
+    timeframeInterval.get(timeframe)!
+  );
   const filteredData = withinTimeframe.filter((hrData) => {
     // Interval window is before current data point, slide window to match current data
     while (isBefore(intervalEnd, hrData.timestamp)) {
       intervalStart = addSeconds(
         intervalStart,
-        timeframeInterval.get(timeframe)
+        timeframeInterval.get(timeframe)!
       );
-      intervalEnd = addSeconds(intervalEnd, timeframeInterval.get(timeframe));
+      intervalEnd = addSeconds(intervalEnd, timeframeInterval.get(timeframe)!);
     }
 
     const within = isWithinInterval(hrData.timestamp, {
@@ -41,9 +44,9 @@ export const sampleDataWithTimeframe = (
     if (within) {
       intervalStart = addSeconds(
         intervalStart,
-        timeframeInterval.get(timeframe)
+        timeframeInterval.get(timeframe)!
       );
-      intervalEnd = addSeconds(intervalEnd, timeframeInterval.get(timeframe));
+      intervalEnd = addSeconds(intervalEnd, timeframeInterval.get(timeframe)!);
     }
 
     return within;

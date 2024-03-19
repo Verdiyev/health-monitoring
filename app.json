@@ -39,6 +39,16 @@
     },
     "updates": {
       "url": "https://u.expo.dev/3dbd4970-065d-4387-8c04-e44c8dd6536c"
-    }
+    },
+    "plugins": [
+      [
+        "react-native-ble-plx", 
+        {
+          "isBackgroundEnabled": true,
+          "modes": ["peripheral", "central"],
+          "bluetoothAlwaysPermission": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
+        }
+      ]
+    ]
   }
 }
