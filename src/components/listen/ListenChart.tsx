@@ -7,16 +7,21 @@ import {
   useSharedValue,
 } from "react-native-reanimated";
 import { useScanner } from "./useScanner";
-import { Skia, Canvas, Path, Mask, Rect } from "@shopify/react-native-skia";
 import { Button, useTheme } from "react-native-paper";
+import { Skia, Canvas, Path, Mask, Rect } from "@shopify/react-native-skia";
 import { divideDataInGroups, addNewData } from "../../utils/ListenUtils";
+import { DATA_RED } from "../../constants/colors";
 
 const CANVAS_HEIGHT = 200;
-
 const FRAME_TIME = 17; // milliseconds
-const TIME_BASE = 2000; // milliseconds
 
-export default function ListenChart() {
+type ListenChartProps = {
+  timeBase: number;
+};
+
+export default function ListenChart(props: ListenChartProps) {
+  const TIME_BASE = props.timeBase * 1000; // Convert to milliseconds
+
   const theme = useTheme();
   const width = Dimensions.get("screen").width;
 
@@ -29,8 +34,15 @@ export default function ListenChart() {
     Skia.Path.Make().moveTo(0, CANVAS_HEIGHT / 2)
   );
 
+  // Reset path values when time base changes
+  previousPath.value = Skia.Path.Make();
+  currentPath.value = Skia.Path.Make().moveTo(0, CANVAS_HEIGHT / 2);
+
   const incomingData: number[] = [];
-  const { xValue } = useScanner({ maxWidth: width, duration: TIME_BASE });
+  const { xValue } = useScanner({
+    maxWidth: width,
+    duration: TIME_BASE,
+  });
 
   // Updates the current path with a new point.
   const updatePathWithNewPoint = (x: number, y: number) => {
@@ -98,14 +110,14 @@ export default function ListenChart() {
           path={currentPath}
           style={"stroke"}
           strokeWidth={2}
-          color={"red"}
+          color={DATA_RED}
         />
         <Mask mask={<Rect x={xValue} height={CANVAS_HEIGHT} width={width} />}>
           <Path
             path={previousPath}
             style={"stroke"}
             strokeWidth={2}
-            color={"red"}
+            color={DATA_RED}
           />
         </Mask>
         <Rect
@@ -122,7 +134,7 @@ export default function ListenChart() {
         style={styles.button}
         onPress={() => addNewData(incomingData, CANVAS_HEIGHT)}
       >
-        Add data
+        Simulate Data
       </Button>
     </View>
   );
@@ -130,7 +142,7 @@ export default function ListenChart() {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
+    flex: 1,
   },
   button: {
     margin: 12,
