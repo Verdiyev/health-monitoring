@@ -1,13 +1,13 @@
 import React from "react";
 
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import {
   differenceInSeconds,
   format,
   formatDistanceToNow,
   formatDistanceToNowStrict,
 } from "date-fns";
-import {
+import Animated, {
   SharedValue,
   runOnJS,
   useDerivedValue,
@@ -18,7 +18,7 @@ import { Canvas, Text, useFont } from "@shopify/react-native-skia";
 const BOLD_FONT_PATH = "./../../../assets/Roboto-Bold.ttf";
 const MEDIUM_FONT_PATH = "./../../../assets/Roboto-Medium.ttf";
 
-const CANVAS_WIDTH = 140;
+const MIN_CANVAS_WIDTH = 140;
 const START_SPACING = 4;
 const TEXT_BOTTOM = 6;
 
@@ -32,6 +32,32 @@ type DataValueProp = {
   color: string;
 };
 
+/**
+ * Generates text indicating the time elapsed since the last updated data point was received.
+ *
+ * Calculates the time difference between the current time and the provided `lastData`.
+ * Based on the difference and the `showExactTime` flag, it generates a text indicating
+ * when the data was last updated.
+ *
+ * @param lastData - The date representing the last update time.
+ * @param showExactTime - Indicates to show the exact time of the last update when pan gesture is active
+ * @returns A string indicating the time elapsed since the last update.
+ *
+ * @remarks
+ * - The function utilizes the `differenceInSeconds`, `formatDistanceToNowStrict`, and `formatDistanceToNow`
+ *   functions from the date-fns library for calculating and formatting the time difference.
+ * - If the time difference is less than or equal to 2 seconds, the function returns "Updated now".
+ * - If `showExactTime` is `true` when pan gesture is active, the function displays the exact time of the
+ *   last update in addition to the relative time.
+ *   Otherwise, it only displays the relative time since the last update.
+ * - The function returns a string with "<" instead of "less than" to make the output more concise.
+ *
+ * @example
+ * ```typescript
+ * const lastUpdatedText = getLastUpdatedText(new Date("2024-03-19T12:00:00"), true);
+ * console.log(lastUpdatedText); // Example output: "Updated now"
+ * ```
+ */
 const getLastUpdatedText = (lastData: Date, showExactTime: boolean): string => {
   const seconds = differenceInSeconds(Date.now(), lastData);
   if (seconds <= 2) return "Updated now";
@@ -71,16 +97,45 @@ export default function CardDataValue(props: DataValueProp) {
     runOnJS(convertTimestamp)(props.timestamp.value, props.isActive.value);
   });
 
-  const valueHeight = valueFont?.measureText(shownValue.value).height ?? 0;
-  const value2Height = valueFont?.measureText(shownValue2.value).height ?? 0;
-  const timeHeight =
-    timestampFont?.measureText(shownTimestamp.value).height ?? 0;
+  const valueHeight = useDerivedValue(
+    () => valueFont?.measureText(shownValue.value).height ?? 0
+  );
+  const value2Height = useDerivedValue(
+    () => valueFont?.measureText(shownValue2.value).height ?? 0
+  );
+  const timeHeight = useDerivedValue(
+    () => timestampFont?.measureText(shownTimestamp.value).height ?? 0
+  );
+
+  const CANVAS_HEIGHT = useDerivedValue(() => {
+    const padding = value2Height.value == 0 ? TEXT_BOTTOM : 2 * TEXT_BOTTOM;
+    return (
+      valueHeight.value + value2Height.value + timeHeight.value + padding + 4
+    );
+  });
+
+  const CANVAS_WIDTH = useDerivedValue(() => {
+    const valueWidth = valueFont?.measureText(shownValue.value).width ?? 0;
+    const value2Width = valueFont?.measureText(shownValue2.value).width ?? 0;
+    const timestampWidth =
+      timestampFont?.measureText(shownTimestamp.value).width ?? 0;
+    return (
+      Math.max(MIN_CANVAS_WIDTH, valueWidth, value2Width, timestampWidth) +
+      START_SPACING
+    );
+  });
+
+  const value2Pos = useDerivedValue(
+    () => valueHeight.value + value2Height.value + TEXT_BOTTOM
+  );
+  const timestampPos = useDerivedValue(() => {
+    const padding = value2Height.value == 0 ? TEXT_BOTTOM : 2 * TEXT_BOTTOM;
+    return timeHeight.value + valueHeight.value + value2Height.value + padding;
+  });
 
   return (
-    <View style={styles.container}>
-      <Canvas
-        style={{ height: valueHeight + TEXT_BOTTOM, width: CANVAS_WIDTH }}
-      >
+    <Animated.View style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
+      <Canvas style={styles.canvas}>
         <Text
           x={START_SPACING}
           y={valueHeight}
@@ -88,43 +143,28 @@ export default function CardDataValue(props: DataValueProp) {
           font={valueFont}
           color={props.color}
         />
-      </Canvas>
-      {props.value2 && props.unit2 && (
-        <Canvas
-          style={{ height: value2Height + TEXT_BOTTOM, width: CANVAS_WIDTH }}
-        >
-          <Text
-            x={START_SPACING}
-            y={valueHeight}
-            text={shownValue2}
-            font={valueFont}
-            color={props.color}
-          />
-        </Canvas>
-      )}
-      <View style={{ height: 2 }} />
-      <Canvas style={{ height: timeHeight + TEXT_BOTTOM, width: CANVAS_WIDTH }}>
         <Text
           x={START_SPACING}
-          y={timeHeight}
+          y={value2Pos}
+          text={shownValue2}
+          font={valueFont}
+          color={props.color}
+        />
+        <Text
+          x={START_SPACING}
+          y={timestampPos}
           text={shownTimestamp}
           font={timestampFont}
           color={props.color}
         />
       </Canvas>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    // backgroundColor: "red",
-  },
   canvas: {
-    alignSelf: "center",
-    width: 120,
-    height: 80,
-    // backgroundColor: "red",
+    width: "100%",
+    height: "100%",
   },
 });

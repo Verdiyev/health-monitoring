@@ -42,7 +42,7 @@ export default function HealthCard(props: HealthCardProps) {
 
   const isActive = useSharedValue(false); // Track if pan gesture active
   const lastData = getLastValue(data) ?? 0;
-  const lastData2 = getLastValue(data2) ?? 0;
+  const lastData2 = getLastValue(data2 ?? []) ?? 0;
   const lastDateString = getLastTimestamp(data).toISOString();
 
   const graphValue = useSharedValue<number>(lastData);
