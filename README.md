@@ -36,6 +36,13 @@ Install `Android NDK` via Android Studio for Skia to build natively using C++. N
 sdk.dir = C://Users//USERNAME//AppData//Local//Android//Sdk
 ```
 
+Run the following commands in terminal to compile and run the development build to be run on Android deveices.
+
+```
+npx expo prebuild
+npx expo run:android
+```
+
 #### IOS
 
 Need MacOS to compile!

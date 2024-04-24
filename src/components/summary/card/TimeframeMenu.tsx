@@ -1,7 +1,7 @@
 import React from "react";
 
 import { StyleSheet } from "react-native";
-import { Menu, Button, useTheme } from "react-native-paper";
+import { Menu, Button, useTheme, MD3Theme } from "react-native-paper";
 import { DataTimeframe } from "../../charts/ChartDataTypes";
 
 type TimeframeMenuProps = {
@@ -70,7 +70,7 @@ export default function TimeframeMenu(props: TimeframeMenuProps) {
   );
 }
 
-const styles = (theme) =>
+const styles = (theme: MD3Theme) =>
   StyleSheet.create({
     timeframeButton: {
       borderRadius: 12,

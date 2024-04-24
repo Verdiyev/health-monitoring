@@ -25,7 +25,7 @@ const loadData = async (setHeartRateData: (x: ChartData[]) => void) => {
   // Load existing data in file
   const rawData = JSON.parse(content);
   // Convert date string into Date object
-  const loadedData: ChartData[] = rawData.map((item) => ({
+  const loadedData: ChartData[] = rawData.map((item: any) => ({
     value: item.value,
     timestamp: new Date(item.timestamp),
   }));

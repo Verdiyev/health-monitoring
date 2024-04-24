@@ -64,13 +64,13 @@ const requestPermissions = async (): Promise<boolean> => {
   );
 
   return (
-    bluetoothScanPermission == "denied" &&
+    bluetoothScanPermission == "granted" &&
     bluetoothConnectPermission == "granted" &&
     accessFineLocationPermission == "granted"
   );
 };
 
-const isDuplicteDevice = (devices: Device[], nextDevice: Device) =>
+const isDuplicatedDevice = (devices: Device[], nextDevice: Device) =>
   devices.findIndex((device) => nextDevice.id === device.id) > -1;
 
 const useBluetooth = (): BluetoothAPI => {
@@ -79,21 +79,31 @@ const useBluetooth = (): BluetoothAPI => {
   const [connectedDevice, setConnectedDevice] = React.useState<Device | null>(
     null
   );
+  const deviceList: Device[] = [];
 
   const scanForDevices = () => {
     bleManager.startDeviceScan(null, null, (error, device) => {
+      console.log("Scanning for bluetooth device... \n");
+
       if (error) {
         console.log(error.message);
         return;
       }
 
       if (device) {
-        setAllDevices((prevDeviceList) => {
-          return isDuplicteDevice(prevDeviceList, device)
-            ? prevDeviceList
-            : [...prevDeviceList, device];
-        });
-        console.log(device.id);
+        if (!isDuplicatedDevice(deviceList, device)) {
+          deviceList.push(device);
+        }
+        // setAllDevices((prevDeviceList) => {
+        //   return isDuplicteDevice(prevDeviceList, device)
+        //     ? prevDeviceList
+        //     : [...prevDeviceList, device];
+        // });
+        console.log(deviceList.length);
+        deviceList.forEach((d) =>
+          console.log(d.id, d.localName, d.serviceUUIDs)
+        );
+        console.log(device.id, device.localName, device.serviceUUIDs);
       }
     });
   };
