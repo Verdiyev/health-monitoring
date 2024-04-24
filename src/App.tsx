@@ -10,6 +10,7 @@ export default function App() {
   const { requestPermissions, scanForDevices } = useBluetooth();
 
   const runBluetoothScan = async () => {
+    console.log("Run bluetooth scan: ", await requestPermissions());
     if (await requestPermissions()) {
       scanForDevices();
     }
